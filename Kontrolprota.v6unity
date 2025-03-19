@@ -1,0 +1,148 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class KontrolProta : MonoBehaviour
+{
+    [Header("Mugimendua")]
+    [SerializeField] float protaAbiadura;
+    float mugimendua;
+    [SerializeField] bool bEskumaraBegira = true;
+
+    [SerializeField] int iTiroIndarra = 100;
+
+    [Header("Saltoa")]
+
+    [SerializeField] GameObject LurraChecker;
+    [SerializeField] float LurraCheckerErradioa;
+    [SerializeField] LayerMask zerDaLurra;
+    [SerializeField] float fSaltoIndarra;
+    bool bLurrean;
+    bool bTiroIndarra;
+    [SerializeField] GameObject BazokaPunta;
+    [SerializeField] GameObject txuspinoaPrefab;
+
+    //InputSystem.Message
+    /* public void OnMove(InputValue movementValue)
+     {
+         mugimendua = movementValue.Get<Vector2>().x;
+
+
+         Debug.Log("Moveee");
+     }*/
+
+
+    //InputSystem.Invoke
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        mugimendua = context.ReadValue<Vector2>().x;
+        Debug.Log("Moveee");
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+
+    {
+        if (context.performed && bLurrean)
+        {
+            gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * fSaltoIndarra);
+        }
+
+    }
+    public void OnFire(InputAction.CallbackContext context)
+    {
+
+        if (context.performed && bLurrean)
+        {
+
+            Debug.Log("TxuspinoaBota");
+            gameObject.GetComponent<Animator>().SetBool("tTxuspinatu", true);
+
+            GameObject txuspinoa = Instantiate(txuspinoaPrefab, BazokaPunta.transform.position, txuspinoaPrefab.transform.rotation);
+
+
+
+
+
+            if (bEskumaraBegira)
+
+            {
+                txuspinoa.GetComponent<Rigidbody2D>().AddForce(BazokaPunta.transform.right * iTiroIndarra, ForceMode2D.Impulse);
+            }
+
+            else
+            {
+
+                txuspinoa.GetComponent<Rigidbody2D>().AddForce(BazokaPunta.transform.right * -iTiroIndarra, ForceMode2D.Impulse);
+
+            }
+
+        }
+    }
+
+    public void TxuspinasoaKendu()
+    {
+        gameObject.GetComponent<Animator>().SetBool("tTxuspinatu", false);
+
+    }
+
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+
+
+    private void FixedUpdate()
+    {
+
+        bLurrean = Physics2D.OverlapCircle(LurraChecker.transform.position, LurraCheckerErradioa, zerDaLurra);
+
+        Debug.Log(bLurrean);
+
+        gameObject.GetComponent<Animator>().SetBool("bLurrean", bLurrean);
+
+        gameObject.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(mugimendua * protaAbiadura, gameObject.GetComponent<Rigidbody2D>().linearVelocity.y);
+
+        //gameObject.GetComponent<Rigidbody2D>().linearVelocityX= mugimendua *protaAbiadura;
+
+
+        gameObject.GetComponent<Animator>().SetFloat("fAbiadura", Mathf.Abs(gameObject.GetComponent<Rigidbody2D>().linearVelocity.x));
+
+
+
+        if (bEskumaraBegira && (mugimendua < 0))
+
+        {
+
+            Flip();
+        }
+
+        if (!bEskumaraBegira && (mugimendua > 0))
+
+
+
+        {
+
+            Flip();
+
+        }
+
+
+    }
+    void Flip()
+
+    {
+
+        bEskumaraBegira = !bEskumaraBegira;
+        Vector2 eskalaAktula = gameObject.transform.localScale;
+        eskalaAktula.x = -eskalaAktula.x;
+        gameObject.transform.localScale = eskalaAktula;
+    }
+}
