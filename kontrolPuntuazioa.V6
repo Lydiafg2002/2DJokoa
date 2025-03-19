@@ -1,0 +1,71 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class kontrolPuntuazioa : MonoBehaviour
+{
+
+    [SerializeField] GameObject TextuPuntuazioa;
+    [SerializeField] GameObject TextuTopScore;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (SceneManager.GetActiveScene().name == "FirstLevel")
+        {
+            PlayerPrefs.SetInt("Puntuazioa", 0);
+
+        }
+        IdatziPuntuazioaPantailan();
+        IdatziTopScorePantailan();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+
+
+
+    public void PuntuakGehitu(int iZenbatPuntu)
+    {
+        PlayerPrefs.SetInt("Puntuazioa", PlayerPrefs.GetInt("Puntuazioa", 0) + iZenbatPuntu);
+        CheckTopScore();
+        IdatziPuntuazioaPantailan();
+    }
+
+
+
+
+
+    void IdatziPuntuazioaPantailan()
+    {
+        TextuPuntuazioa.GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Puntuazioa", 0).ToString();
+    }
+
+    public void CheckTopScore()
+
+    {
+
+        if (PlayerPrefs.GetInt("Puntuazioa") > PlayerPrefs.GetInt("ppTopScore"))
+        {
+
+            PlayerPrefs.SetInt("ppTopScore", PlayerPrefs.GetInt("Puntuazioa"));
+            IdatziTopScorePantailan();
+        }
+
+    }
+
+
+    public void IdatziTopScorePantailan()
+    {
+
+        TextuTopScore.GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("ppTopScore", PlayerPrefs.GetInt("Puntuazioa")).ToString();
+
+    }
+   }
+
+
+
